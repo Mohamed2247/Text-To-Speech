@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text To Speech Converter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="hero">
+        <h1>Text To Speech <span>converter</span></h1>
+        <textarea placeholder="Write anything here..."></textarea>
+        <div class="row">
+            <select id="voices"></select>
+            <button>Listen</button>
+        </div>
+    </div>
+    <script>
+        const speech = new SpeechSynthesisUtterance();
+        const voicesDropdown = document.getElementById('voices');
+        const synth = window.speechSynthesis;
+
+        function populateVoices() {
+            const voices = synth.getVoices();
+            voicesDropdown.innerHTML = voices
+                .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+                .join('');
+        }
+
+        synth.addEventListener('voiceschanged', populateVoices);
+
+        document.querySelector("button").addEventListener("click", () => {
+            speech.text = document.querySelector("textarea").value;
+            const selectedVoice = voicesDropdown.selectedOptions[0].getAttribute('value');
+            speech.voice = synth.getVoices().find(voice => voice.name === selectedVoice);
+            window.speechSynthesis.speak(speech);
+        });
+
+        populateVoices();
+    </script>
+</body>
+</html>
